@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @CrossOrigin(origins="http://localhost:3000")//Access to XMLHttpRequest at 'http://localhost:8080/api/v1/employees' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
 @RestController
 @RequestMapping("/api/v1/")
@@ -44,5 +47,14 @@ public class EmployeeController {
         Employee updatedEmployee=employeeRepository.save(employee);
         return  ResponseEntity.ok(updatedEmployee);
         //header에서 content-type : application/json 설정하고 넣어야함
+    }
+    //delete employee rest api
+    @DeleteMapping("/employees/{id}")
+    public ResponseEntity<Map<String,Boolean>> deleteEmployee(@PathVariable long id){
+        Employee employee=  employeeRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Employee not exist with id :" +id));
+        employeeRepository.delete(employee);
+        Map<String,Boolean> response = new HashMap<>();
+        response.put("delete",Boolean.TRUE);
+        return ResponseEntity.ok(response);
     }
 }
